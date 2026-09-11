@@ -209,6 +209,17 @@ tempCodeRunnerFile.py
 # PyPI configuration file
 .pypirc
 
+# Shadow local runtime data and build outputs
+.venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+build/
+dist/
+*.spec
+assets_shadow_test.ico
+
 # Marimo
 marimo/_static/
 marimo/_lsp/
