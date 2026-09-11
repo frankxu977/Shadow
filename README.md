@@ -58,10 +58,10 @@ Shadow focuses on detection and alerts. It does not block all access and is not 
 ## 使用 / Usage
 
 当前初版包含托盘后台运行、摄像头开始/停止提醒、应用名称和路径、访问历史、
-CSV 导出、应用通知静音、暂停/继续，以及可选的登录启动。
+CSV 导出、暂停/继续、通知开关，以及可选的登录启动。
 
-双击 `dist/Shadow.exe` 打开。关闭窗口后继续在托盘运行；右键盾牌图标可打开、
-暂停或退出。首次启动不会自动设置登录启动。
+双击 `dist/Shadow.exe` 后，程序直接进入右下角系统托盘。右键盾牌图标可查看
+状态和历史、暂停或退出。首次启动不会自动设置登录启动。
 
 通知使用 Windows 系统通知，勿扰模式可能隐藏横幅。静音应用仍然会记录历史。
 读取错误显示 UNKNOWN；OFF 只代表 Windows 未报告正在访问。

@@ -1,12 +1,14 @@
 """Regression tests for registry failures, transitions, and local history."""
 from pathlib import Path
 import tempfile
+import threading
 import unittest
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from shadow.monitor import CameraApp, Snapshot, Tracker, scan_camera, filetime_to_iso, describe_app
 from shadow.storage import Store
+from shadow.tray_app import TrayApp
 
 
 def app(name="chrome.exe", start="2026-09-11T10:00:00+00:00"):
@@ -107,6 +109,49 @@ class RegistryTests(unittest.TestCase):
 
 
 class StorageTests(unittest.TestCase):
+    def test_store_can_be_used_by_monitor_thread(self):
+        with tempfile.TemporaryDirectory() as directory:
+            store = Store(Path(directory) / "history.sqlite3")
+            camera = app()
+            failures = []
+            def monitor_write():
+                try:
+                    store.start(camera)
+                    store.stop(camera)
+                except Exception as error:
+                    failures.append(error)
+            worker = threading.Thread(target=monitor_write)
+            worker.start()
+            worker.join()
+            self.assertEqual(failures, [])
+            self.assertEqual(store.rows()[0]["status"], "stopped")
+            store.close()
+
+
+class NotificationFlowTests(unittest.TestCase):
+    def test_state_changes_create_start_and_stop_notifications(self):
+        with tempfile.TemporaryDirectory() as directory:
+            tray = TrayApp.__new__(TrayApp)
+            tray.store = Store(Path(directory) / "history.sqlite3")
+            tray.tracker = Tracker()
+            tray.notifications = True
+            tray.muted = set()
+            sent = []
+            tray.notifier = type("Recorder", (), {
+                "send": lambda self, title, body: sent.append((title, body))
+            })()
+            tray.set_status = lambda *args: None
+            camera = app()
+
+            tray.apply_snapshot(Snapshot({camera.identity: camera}))
+            tray.apply_snapshot(Snapshot())
+
+            self.assertEqual(len(sent), 2)
+            self.assertIn("Camera in use", sent[0][0])
+            self.assertIn("Camera stopped", sent[1][0])
+            self.assertEqual(tray.store.rows()[0]["status"], "stopped")
+            tray.store.close()
+
     def test_sessions_mute_export_and_recovery(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "history.sqlite3"
