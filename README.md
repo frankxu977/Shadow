@@ -1,10 +1,6 @@
 # 影子（Shadow）
 
-影子是一款面向 Windows 的轻量级摄像头隐私监控工具。
-
-Shadow is a lightweight Windows tool for monitoring camera access.
-
-当应用或浏览器使用摄像头时，影子会提醒用户，帮助发现未知或意外访问。
+当应用或浏览器未经过允许或提示使用摄像头时，影子会提醒用户，帮助发现未知或意外访问。
 
 It notifies you when an app or browser accesses the camera.
 
@@ -42,8 +38,7 @@ Shadow focuses on detection and alerts. It does not block all access and is not 
 - 不查看、录制或保存画面
 - 不上传访问记录
 - 不要求账号
-- 尽量减少权限
-- 代码公开透明
+
 
 ## Privacy
 
@@ -51,8 +46,7 @@ Shadow focuses on detection and alerts. It does not block all access and is not 
 - Does not view, record, or save footage
 - Does not upload access logs
 - No account required
-- Uses minimal permissions
-- Open-source and transparent
+
 
 
 ## License
